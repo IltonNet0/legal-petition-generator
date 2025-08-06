@@ -1,6 +1,7 @@
 import sys
 from docx import Document
-from docx.shared import Length
+from docx.shared import Cm
+from docxtpl import DocxTemplate
 from models.petition_data import petition_data
 from utils.paragraph_style import Set_paragraph_style
 
@@ -36,27 +37,37 @@ def Petition_information():
     data = petition_data()
     data.court = input('Vara: ').upper()
     data.judge_name = input('Nome do juiz: ').upper()
+    data.client_name = input('Nome do cliente: ').upper()
 
     return data
 
-information = Petition_information()
+new_case = Petition_information()
 
-petition = Document()
+doc = DocxTemplate('src/petition/Template - Ana Eloisa.docx')
+context = {
+    'new_case': new_case
+}
 
-apresetation = f"EXCELENTÍSSIMO(A) SENHOR(A) DOUTOR(A) JUIZ(A) {information.judge_name} DO TRABALHO DA VARA DO TRABALHO DE {information.court}"
+doc.render(context)
+doc.save(f"Teste {new_case.client_name} - petition.docx")
 
-# petition.add_paragraph(apresetation, level=1)
 
-header = petition.add_heading()
-header.text = f"{apresetation}\n"
-# header.alignment = 1
-# header.text_size = 20
+################## TESTING DOCXTPL ##################
 
-paragraph = petition.add_paragraph()
-paragraph.text = 'Testando as configurações de parágrafo.'
-Set_paragraph_style(paragraph, 'justify', 12, 6, 11)
+# apresetation = f"EXCELENTÍSSIMO(A) SENHOR(A) DOUTOR(A) JUIZ(A) {new_case.judge_name} DO TRABALHO DA VARA DO TRABALHO DE {new_case.court}"
 
-petition.save('petition_test.docx')
+# # petition.add_paragraph(apresetation, level=1)
+
+# header = petition.add_heading()
+# header.text = f"{apresetation}\n"
+# # header.alignment = 1
+# # header.text_size = 20
+
+# paragraph = petition.add_paragraph()
+# paragraph.text = 'Testando as configurações de parágrafo.'
+# Set_paragraph_style(paragraph, 'justify', 12, 6, 11)
+
+# petition.save('petition_test.docx')
 
 
 print(f'\n{'Petição salva!'}\n')
